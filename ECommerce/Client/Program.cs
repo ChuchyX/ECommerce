@@ -1,4 +1,5 @@
 using Blazored.LocalStorage;
+using Blazored.Toast;
 using ECommerce.Client;
 using ECommerce.Client.Services.CategoryService;
 using ECommerce.Client.Services.ProductService;
@@ -14,6 +15,7 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddBlazoredToast();
 
 
 await builder.Build().RunAsync();

@@ -1,6 +1,7 @@
 ﻿@page "/product/{id:int}"
 @inject IProductService ProductService
 @inject ILocalStorageService LocalStorage
+@inject IToastService ToastService
 
 
 <div class="row mt-4">
@@ -47,6 +48,6 @@
         }
         cart.Add(product);
         await LocalStorage.SetItemAsync("cart", cart);
-        //ToastService.ShowSuccess("Added to cart", product.Title);
+        ToastService.ShowSuccess("Added to cart", product.Title);
     }
 }
