@@ -1,0 +1,52 @@
+﻿@page "/product/{id:int}"
+@inject IProductService ProductService
+@inject ILocalStorageService LocalStorage
+
+
+<div class="row mt-4">
+    <div class="col-lg-8 offset-lg-2 col-md-8 offset-md-2 col-sm-8 offset-sm-2">
+        <div class="media">
+            <div class="media-img-wrapper mr-2">
+                <img class="media-img" src="@product.Image" alt="@product.Title" />
+            </div>
+            <div class="media-body">
+                <h2 class="mb-0">@product.Title</h2>
+                <p>@product.Description</p>
+                @if(product.OriginalPrice > product.Price)
+                {
+                    <h6 class="text-muted original-price">$@product.OriginalPrice</h6>
+                }
+                <h4 class="price">$@product.Price</h4>
+                <button class="btn btn-primary" @onclick="AddToCart"><i class="oi oi-cart"></i>&nbsp;&nbsp;&nbsp;Add to Cart</button>
+            </div>
+        </div>
+        
+   </div>
+</div>
+
+
+
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private Product product = new Product();
+
+    protected override async Task OnInitializedAsync()
+    {
+        product = await ProductService.GetProduct(Id);
+    }
+
+    private async Task AddToCart()
+    {
+        var cart = await LocalStorage.GetItemAsync<List<Product>>("cart");
+        if (cart == null)
+        {
+            cart = new List<Product>();
+        }
+        cart.Add(product);
+        await LocalStorage.SetItemAsync("cart", cart);
+        //ToastService.ShowSuccess("Added to cart", product.Title);
+    }
+}
