@@ -2,6 +2,7 @@
 @inject IProductService ProductService
 @inject ILocalStorageService LocalStorage
 @inject IToastService ToastService
+@inject ICartService CartService
 
 
 <div class="row mt-4">
@@ -41,13 +42,6 @@
 
     private async Task AddToCart()
     {
-        var cart = await LocalStorage.GetItemAsync<List<Product>>("cart");
-        if (cart == null)
-        {
-            cart = new List<Product>();
-        }
-        cart.Add(product);
-        await LocalStorage.SetItemAsync("cart", cart);
-        ToastService.ShowSuccess("Added to cart", product.Title);
+        await CartService.AddToCart(product);
     }
 }
