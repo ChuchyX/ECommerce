@@ -65,5 +65,6 @@
     {
         await LocalStorage.RemoveItemAsync("username");
         await AuthStateProvider.GetAuthenticationStateAsync();
+        NavigationManager.NavigateTo("/");
     }
 }

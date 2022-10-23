@@ -24,7 +24,7 @@ else
                     <h4>@product.Title</h4>
                     <EditForm Model="product">
                         <label for="quantity">Quantity</label>
-                        <InputNumber id="quantity" @bind-Value="product.Quantity" class="form-control"/>
+                        <InputNumber id="quantity" @bind-Value="product.Quantity" class="form-control" style="width: 70px;"/>
                     </EditForm>
 
                     <button type="button" class="btn btn-danger mt-2" @onclick="@(() => DeleteItem(product))">Delete</button>
@@ -47,8 +47,9 @@ else
         <div>
             Total (@cartItems.Count): $@cartItems.Sum(item => item.Price * item.Quantity)
         </div>
-        <div margin-top: 10px;">
+        <div style="margin-top: 10px;">
             <button class="btn btn-primary btn-lg">Place Order</button>
+            <button class="btn btn-danger btn-lg" @onclick="EmptyCart">Empty Cart</button>
         </div>
     </div>
     
@@ -66,6 +67,18 @@ else
     private async Task DeleteItem(Product item)
     {
         await CartService.DeleteItem(item);
+        cartItems = await CartService.GetCartItems();
+    }
+
+    private async Task EmptyCart()
+    {
+        await CartService.EmptyCart();
+        cartItems = await CartService.GetCartItems();
+    }
+
+    private async Task PlaceOrder()
+    {
+        await CartService.EmptyCart();
         cartItems = await CartService.GetCartItems();
     }
 }
