@@ -24,7 +24,7 @@ namespace ECommerce.Client.Services.CartService
             {
                 cart = new List<Product>();
             }
-            var encontrado= false;
+            var encontrado = false;
             for (int i = 0; i < cart.Count; i++)
             {
                 if (cart[i].Id==product.Id)
