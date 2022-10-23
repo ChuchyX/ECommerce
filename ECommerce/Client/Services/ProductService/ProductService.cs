@@ -30,5 +30,10 @@ namespace ECommerce.Client.Services.ProductService
         {
             return await http.GetFromJsonAsync<Product>($"api/Product/{id}");
         }
+
+        public async Task<List<Product>> SearchProducts(string searchText)
+        {
+            return await http.GetFromJsonAsync<List<Product>>($"api/Product/Search/{searchText}");
+        }
     }
 }
