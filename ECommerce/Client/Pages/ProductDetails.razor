@@ -4,6 +4,9 @@
 @inject IToastService ToastService
 @inject ICartService CartService
 
+<div class="views">
+    <i class="oi oi-eye"></i>@GetViewString()
+</div>
 
 <div class="row mt-4">
     <div class="col-lg-8 offset-lg-2 col-md-8 offset-md-2 col-sm-8 offset-sm-2">
@@ -43,5 +46,17 @@
     private async Task AddToCart()
     {
         await CartService.AddToCart(product);
+    }
+
+    private string GetViewString()
+    {
+        if (product.Views > 1000000)
+            return $"{((float)product.Views / 1000000).ToString("#.##")}M";
+        if (product.Views > 100000)
+            return $"{((float)product.Views / 1000).ToString("#")}K";
+        if (product.Views > 1000)
+            return $"{((float)product.Views / 1000).ToString("#.##")}K";
+
+        return product.Views.ToString("0##");
     }
 }

@@ -94,6 +94,12 @@ a, .btn-link {
     transform: scale(1.2);
 }
 
+.views {
+    font-size: 12px;
+    color: gray;
+    text-align: right;
+}
+
 
 
 

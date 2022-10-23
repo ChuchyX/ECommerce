@@ -61,10 +61,4 @@
        await CategoryService.LoadCategories();
     }
 
-    private async void Logout()
-    {
-        await LocalStorage.RemoveItemAsync("username");
-        await AuthStateProvider.GetAuthenticationStateAsync();
-        NavigationManager.NavigateTo("/");
-    }
 }
