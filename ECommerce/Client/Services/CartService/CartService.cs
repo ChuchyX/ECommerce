@@ -9,7 +9,6 @@ namespace ECommerce.Client.Services.CartService
     {
         private readonly ILocalStorageService localStorage;
         private readonly IToastService toastService;
-        private readonly IProductService productService;
 
         public event Action OnChange;
 
@@ -25,7 +24,20 @@ namespace ECommerce.Client.Services.CartService
             {
                 cart = new List<Product>();
             }
-            cart.Add(product);
+            var encontrado= false;
+            for (int i = 0; i < cart.Count; i++)
+            {
+                if (cart[i].Id==product.Id)
+                {
+                    cart[i].Quantity++;
+                    encontrado = true;
+                }
+            }
+            if (!encontrado)
+            {
+                cart.Add(product);
+            }
+           
             await localStorage.SetItemAsync("cart", cart);
             toastService.ShowSuccess("Added to cart", product.Title);
 
