@@ -133,9 +133,11 @@ namespace ECommerce.Server.Services.ProductService
             return  Products.Where(p => p.Id == categorie.Id).ToList();
         }
 
-        public Task<List<Product>> SearchProducts(string searchText)
+        public async Task<List<Product>> SearchProducts(string searchText)
         {
-            throw new NotImplementedException();
+            return await _context.Products
+                .Where(p => p.Title.Contains(searchText) || p.Description.Contains(searchText))
+                .ToListAsync();
         }
     }
 }
