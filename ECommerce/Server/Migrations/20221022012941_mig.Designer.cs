@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECommerce.Server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20221018210511_first")]
-    partial class first
+    [Migration("20221022012941_mig")]
+    partial class mig
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -109,6 +109,9 @@ namespace ECommerce.Server.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -134,6 +137,7 @@ namespace ECommerce.Server.Migrations
                             IsPublic = false,
                             OriginalPrice = 0m,
                             Price = 0m,
+                            Quantity = 1,
                             Title = "The Hitchhiker's Guide to the Galaxy",
                             Views = 0
                         },
@@ -148,6 +152,7 @@ namespace ECommerce.Server.Migrations
                             IsPublic = false,
                             OriginalPrice = 0m,
                             Price = 0m,
+                            Quantity = 1,
                             Title = "Ready Player One",
                             Views = 0
                         },
@@ -162,6 +167,7 @@ namespace ECommerce.Server.Migrations
                             IsPublic = false,
                             OriginalPrice = 0m,
                             Price = 0m,
+                            Quantity = 1,
                             Title = "Nineteen Eighty-Four",
                             Views = 0
                         },
@@ -176,6 +182,7 @@ namespace ECommerce.Server.Migrations
                             IsPublic = false,
                             OriginalPrice = 0m,
                             Price = 0m,
+                            Quantity = 1,
                             Title = "Pentax Spotmatic",
                             Views = 0
                         },
@@ -190,6 +197,7 @@ namespace ECommerce.Server.Migrations
                             IsPublic = false,
                             OriginalPrice = 0m,
                             Price = 0m,
+                            Quantity = 1,
                             Title = "Xbox",
                             Views = 0
                         },
@@ -204,6 +212,7 @@ namespace ECommerce.Server.Migrations
                             IsPublic = false,
                             OriginalPrice = 0m,
                             Price = 0m,
+                            Quantity = 1,
                             Title = "Super Nintendo Entertainment System",
                             Views = 0
                         },
@@ -218,6 +227,7 @@ namespace ECommerce.Server.Migrations
                             IsPublic = false,
                             OriginalPrice = 0m,
                             Price = 0m,
+                            Quantity = 1,
                             Title = "Half-Life 2",
                             Views = 0
                         },
@@ -232,6 +242,7 @@ namespace ECommerce.Server.Migrations
                             IsPublic = false,
                             OriginalPrice = 0m,
                             Price = 0m,
+                            Quantity = 1,
                             Title = "Diablo II",
                             Views = 0
                         },
@@ -246,6 +257,7 @@ namespace ECommerce.Server.Migrations
                             IsPublic = false,
                             OriginalPrice = 0m,
                             Price = 0m,
+                            Quantity = 1,
                             Title = "Day of the Tentacle",
                             Views = 0
                         });
@@ -254,17 +266,12 @@ namespace ECommerce.Server.Migrations
             modelBuilder.Entity("ECommerce.Shared.Product", b =>
                 {
                     b.HasOne("ECommerce.Shared.Category", "Category")
-                        .WithMany("Products")
+                        .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("ECommerce.Shared.Category", b =>
-                {
-                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }

@@ -31,5 +31,35 @@ namespace ECommerce.Client.Services.CartService
 
             OnChange.Invoke();
         }
+        public async Task<List<Product>> GetCartItems()
+        {
+            var cart = await localStorage.GetItemAsync<List<Product>>("cart");
+            if (cart == null)
+            {
+                return new List<Product>();
+            }
+            return cart;
+        }
+
+        public async Task DeleteItem(Product product)
+        {
+            var cart = await localStorage.GetItemAsync<List<Product>>("cart");
+            if (cart == null)
+            {
+                return;
+            }
+
+            var cartItem = cart.Find(x => x.Id == product.Id);
+            cart.Remove(cartItem);
+
+            await localStorage.SetItemAsync("cart", cart);
+            OnChange.Invoke();
+        }
+
+        public async Task EmptyCart()
+        {
+            await localStorage.RemoveItemAsync("cart");
+            OnChange.Invoke();
+        }
     }
 }

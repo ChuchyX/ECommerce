@@ -6,5 +6,8 @@ namespace ECommerce.Client.Services.CartService
     {
         event Action OnChange;
         Task AddToCart(Product product);
+        Task<List<Product>> GetCartItems();
+        Task DeleteItem(Product item);
+        Task EmptyCart();
     }
 }

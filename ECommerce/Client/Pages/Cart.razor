@@ -1,0 +1,71 @@
+﻿@page "/cart"
+@inject ICartService CartService
+
+<h3>Shopping Cart</h3>
+@if (cartItems == null || cartItems.Count <= 0)
+{
+    <span>You have no items in your cart.</span>
+}
+else  
+{
+  
+   @foreach (var product in cartItems)
+   {    
+        <div class="row mt-5">
+            <div class="col-lg-8 offset-lg-2 col-md-8 offset-md-2 col-sm-8 offset-sm-2 cartlist">
+               
+                    <div class="media-img-wrapper box1">
+                        <a href="/product/@product.Id">
+                            <img class="media-img" src="@product.Image" alt="@product.Title" />
+                        </a>
+                    </div>
+
+                <div class="media-body box2">
+                    <h4>@product.Title</h4>
+                    <EditForm Model="product">
+                        <label for="quantity">Quantity</label>
+                        <InputNumber id="quantity" @bind-Value="product.Quantity" class="form-control"/>
+                    </EditForm>
+
+                    <button type="button" class="btn btn-danger mt-2" @onclick="@(() => DeleteItem(product))">Delete</button>
+                    <h5 class="price">
+                        $@(product.Price * product.Quantity)
+                    </h5>
+                </div>
+
+                
+            </div>
+
+            <div class="col-lg-6 offset-lg-2 col-md-6 offset-md-2 col-sm-6 offset-sm-2 mt-4">
+                <hr>
+            </div>
+                
+          
+        </div>
+    }
+    <div class="col-lg-2 offset-10 mb-5" style=" font-weight: bold;">
+        <div>
+            Total (@cartItems.Count): $@cartItems.Sum(item => item.Price * item.Quantity)
+        </div>
+        <div margin-top: 10px;">
+            <button class="btn btn-primary btn-lg">Place Order</button>
+        </div>
+    </div>
+    
+}
+
+@code {
+    List<Product> cartItems = new List<Product>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        cartItems = await CartService.GetCartItems();
+    }
+
+    private async Task DeleteItem(Product item)
+    {
+        await CartService.DeleteItem(item);
+        cartItems = await CartService.GetCartItems();
+    }
+}
