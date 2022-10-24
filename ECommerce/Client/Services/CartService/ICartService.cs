@@ -9,5 +9,6 @@ namespace ECommerce.Client.Services.CartService
         Task<List<Product>> GetCartItems();
         Task DeleteItem(Product item);
         Task EmptyCart();
+        Task<string> Checkout();
     }
 }

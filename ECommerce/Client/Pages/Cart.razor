@@ -1,5 +1,6 @@
 ﻿@page "/cart"
 @inject ICartService CartService
+@inject NavigationManager NavigationManager
 
 <h3>Shopping Cart</h3>
 @if (cartItems == null || cartItems.Count <= 0)
@@ -48,7 +49,7 @@ else
             Total (@cartItems.Count): $@cartItems.Sum(item => item.Price * item.Quantity)
         </div>
         <div style="margin-top: 10px;">
-            <button class="btn btn-primary btn-lg">Place Order</button>
+            <button class="btn btn-primary btn-lg" @onclick="PlaceOrder">Place Order</button>
             <button class="btn btn-danger btn-lg" @onclick="EmptyCart">Empty Cart</button>
         </div>
     </div>
@@ -78,6 +79,8 @@ else
 
     private async Task PlaceOrder()
     {
+        string checkoutUrl = await CartService.Checkout();
+        NavigationManager.NavigateTo(checkoutUrl);
         await CartService.EmptyCart();
         cartItems = await CartService.GetCartItems();
     }

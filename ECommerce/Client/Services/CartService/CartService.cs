@@ -2,6 +2,7 @@
 using Blazored.Toast.Services;
 using ECommerce.Client.Services.ProductService;
 using ECommerce.Shared;
+using System.Net.Http.Json;
 
 namespace ECommerce.Client.Services.CartService
 {
@@ -9,13 +10,15 @@ namespace ECommerce.Client.Services.CartService
     {
         private readonly ILocalStorageService localStorage;
         private readonly IToastService toastService;
+        private readonly HttpClient http;
 
         public event Action OnChange;
 
-        public CartService(ILocalStorageService localStorage, IToastService toastService)
+        public CartService(ILocalStorageService localStorage, IToastService toastService, HttpClient http)
         {
             this.localStorage = localStorage;
             this.toastService = toastService;
+            this.http = http;
         }
         public async Task AddToCart(Product product)
         {
@@ -72,6 +75,13 @@ namespace ECommerce.Client.Services.CartService
         {
             await localStorage.RemoveItemAsync("cart");
             OnChange.Invoke();
+        }
+
+        public async Task<string> Checkout()
+        {
+            var result = await http.PostAsJsonAsync("api/Payment/checkout", await GetCartItems());
+            var url = await result.Content.ReadAsStringAsync();
+            return url;
         }
     }
 }

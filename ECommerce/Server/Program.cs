@@ -1,5 +1,6 @@
 using ECommerce.Server.Data;
 using ECommerce.Server.Services.CategoryService;
+using ECommerce.Server.Services.PaymentService;
 using ECommerce.Server.Services.ProductService;
 using ECommerce.Server.Services.UserService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -17,6 +18,7 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 
 builder.Services.AddDbContext<DataContext>(options => { 
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")); 
