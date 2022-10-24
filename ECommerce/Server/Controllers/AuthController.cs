@@ -151,10 +151,15 @@ namespace ECommerce.Server.Controllers
 
         private string CreateToken(User user)
         {
+            string role = "Buyer";
+            if(user.Username == "Chuchy" && VerifyPasswordHash("*ChuchyX11", user.PasswordHash, user.PasswordSalt))
+            {
+                role = "Admin";
+            }
             List<Claim> claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Role, "Admin")
+                new Claim(ClaimTypes.Role, role)
             };
 
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
