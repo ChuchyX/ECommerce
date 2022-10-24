@@ -1,6 +1,7 @@
 ﻿@page "/cart"
 @inject ICartService CartService
 @inject NavigationManager NavigationManager
+@attribute [Authorize]
 
 <h3>Shopping Cart</h3>
 @if (cartItems == null || cartItems.Count <= 0)

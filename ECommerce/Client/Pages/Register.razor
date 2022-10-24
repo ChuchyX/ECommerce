@@ -1,4 +1,4 @@
-﻿@page "/login"
+﻿@page "/register"
 @inject ILocalStorageService LocalStorage
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthStateProvider
@@ -6,7 +6,7 @@
 @inject IToastService ToastService
 
 
-<h3>Login</h3>
+<h3>Register</h3>
 
 <EditForm Model="user" OnSubmit="HandleLogin">
     <div class="form-group">
@@ -17,7 +17,7 @@
         <label for="password">Password</label>
         <InputText id="password" @bind-Value="user.Password" type="password" class="form-control" />
     </div>
-    <button type="submit" class="btn btn-primary mt-2">Login</button>
+    <button type="submit" class="btn btn-primary mt-2">Register</button>
 </EditForm>
 
 @code {
@@ -26,18 +26,16 @@
 
     private async Task HandleLogin()
     {
-        var result = await Http.PostAsJsonAsync("api/Auth/login", user);
-        if(result.IsSuccessStatusCode)
+        var result = await Http.PostAsJsonAsync("api/Auth/register", user);
+        if (result.IsSuccessStatusCode)
         {
-            var token = await result.Content.ReadAsStringAsync();
-            await LocalStorage.SetItemAsync("token", token);
-            await AuthStateProvider.GetAuthenticationStateAsync();
+            ToastService.ShowSuccess("Registered successfully", "Success");
             NavigationManager.NavigateTo("");
         }
         else
         {
-            ToastService.ShowError("Wrong Username or Password", "Error");
+            ToastService.ShowError("Sorry, there was a error registering your user. Maybe there is already a user with your username and password!!!", "Error");
         }
-        
+
     }
 }

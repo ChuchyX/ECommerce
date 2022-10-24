@@ -1,4 +1,5 @@
-﻿using ECommerce.Server.Services.UserService;
+﻿using ECommerce.Server.Data;
+using ECommerce.Server.Services.UserService;
 using ECommerce.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -19,19 +20,14 @@ namespace ECommerce.Server.Controllers
 
         private readonly IConfiguration _configuration;
         private readonly IUserService _userService;
-        User usuario = new User();
-        
 
-        //agregar dbcontext si guardo users en bd. Para este caso solo voy a utilizar un user agregado manualmente
+        private readonly DataContext _context;
 
-        public AuthController(IConfiguration configuration, IUserService userService)
+        public AuthController(IConfiguration configuration, IUserService userService, DataContext context)
         {
             _configuration = configuration;
-            _userService = userService;
-            usuario.Username = "Chuchy";
-            CreatePasswordHash("*Chuchy11", out byte[] passwordHash, out byte[] passwordSalt);
-            usuario.PasswordHash = passwordHash;
-            usuario.PasswordSalt = passwordSalt;
+            _userService = userService;           
+            _context = context;
         }
 
 
@@ -43,55 +39,56 @@ namespace ECommerce.Server.Controllers
             return Ok(userName);
         }
 
-        //[HttpPost("register")]
-        //public async Task<ActionResult<User>> Register(UserLoginDto request)
-        //{
-        //    CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
+        [HttpPost("register")]
+        public async Task<ActionResult<User>> Register(UserLoginDto request)
+        {
+            var listaUsers = _context.Users.ToList();
 
-        //    var user = new User();
+            bool encontrado = listaUsers.Any(u => u.Username == request.Username && VerifyPasswordHash(request.Password, u.PasswordHash, u.PasswordSalt));
+       
+            if (encontrado)
+            {
+                return BadRequest("Sorry, there is already a user with your username and password!!!");
+            }
+            else
+            {
+                CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
-        //    user.Username = request.Username;
-        //    user.PasswordHash = passwordHash;
-        //    user.PasswordSalt = passwordSalt;
+                var user = new User();
 
-        //    _context.Usuarios.Add(user);
-        //    await _context.SaveChangesAsync();
+                user.Username = request.Username;
+                user.PasswordHash = passwordHash;
+                user.PasswordSalt = passwordSalt;
 
-        //    return Ok(user);
-        //}
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+
+                return Ok(user);
+            }          
+        }
 
         [HttpPost("login")]
         public async Task<ActionResult<string>> Login(UserLoginDto request)
         {
-            //var listaUsers = _context.Usuarios.ToList();
+            var listaUsers = _context.Users.ToList();
 
-            //var usuario = new User();
-            //bool encontrado = false;
+            var usuario = new User();
+            bool encontrado = false;
 
-            //foreach (var user in listaUsers)
-            //{
-            //    if (user.Username == request.Username && VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
-            //    {
-            //        usuario = user;
-            //        encontrado = true;
-            //    }
-            //}
+            foreach (var user in listaUsers)
+            {
+                if (user.Username == request.Username && VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
+                {
+                    usuario = user;
+                    encontrado = true;
+                }
+            }
 
-            //if (!encontrado)
-            //{
-            //    return BadRequest("User Not Found. Wrong Username or Password");
-            //}
-            //else
-            //{
-            //    string token = CreateToken(usuario);
-
-            //    var refreshToken = GenerateRefreshToken();
-            //    SetRefreshToken(refreshToken, usuario);
-
-            //    return Ok(token);
-            //}
-
-            if (usuario.Username == request.Username && VerifyPasswordHash(request.Password, usuario.PasswordHash, usuario.PasswordSalt))
+            if (!encontrado)
+            {
+                return BadRequest("User Not Found. Wrong Username or Password");
+            }
+            else
             {
                 string token = CreateToken(usuario);
 
@@ -99,11 +96,7 @@ namespace ECommerce.Server.Controllers
                 SetRefreshToken(refreshToken, usuario);
 
                 return Ok(token);
-            }
-            else
-            {
-                return BadRequest("User Not Found. Wrong Username or Password");
-            }          
+            }         
         }
 
         [HttpPost("refresh-token")]
@@ -152,9 +145,8 @@ namespace ECommerce.Server.Controllers
             user.TokenCreated = newRefreshToken.Created;
             user.TokenExpires = newRefreshToken.Expires;
 
-            usuario = user;
-            //_context.Entry(user).State = EntityState.Modified;
-            //_context.SaveChangesAsync();
+            _context.Entry(user).State = EntityState.Modified;
+            _context.SaveChangesAsync();
         }
 
         private string CreateToken(User user)
