@@ -99,6 +99,15 @@ namespace ECommerce.Server.Controllers
             }         
         }
 
+
+
+        [HttpGet("getcartitems"), Authorize]
+        public async Task<ActionResult<List<Product>>> GetCartItems(string token)
+        {
+            User user = await _context.Users.FirstOrDefaultAsync(x => x.RefreshToken == token);
+            return Ok(user.cartItems);
+        }
+
         [HttpPost("refresh-token")]
         public async Task<ActionResult<string>> RefreshToken(User user)
         {
@@ -194,5 +203,7 @@ namespace ECommerce.Server.Controllers
                 return computedHash.SequenceEqual(passwordHash);
             }
         }
+
+
     }
 }

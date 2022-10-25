@@ -48,6 +48,7 @@ namespace ECommerce.Client.Services.CartService
         }
         public async Task<List<Product>> GetCartItems()
         {
+            //obtener de AuthController del metodo get que manda el cartItems del usuario
             var cart = await localStorage.GetItemAsync<List<Product>>("cart");
             if (cart == null)
             {

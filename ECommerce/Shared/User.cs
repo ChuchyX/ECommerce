@@ -15,5 +15,6 @@ namespace ECommerce.Shared
         public string RefreshToken { get; set; } = string.Empty;
         public DateTime TokenCreated { get; set; }
         public DateTime TokenExpires { get; set; }
+        public List<Product> cartItems { get; set; } = new List<Product>();
     }
 }

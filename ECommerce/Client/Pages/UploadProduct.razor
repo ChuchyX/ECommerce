@@ -1,0 +1,69 @@
+﻿@page "/upload-product"
+@inject HttpClient Http
+@inject IProductService ProductService
+@inject ICategoryService CategoryService
+@inject IToastService ToastService
+@inject NavigationManager NavigationManager
+@attribute [Authorize(Roles = "Admin")]
+
+<h3>Upload Product</h3>
+
+<EditForm Model="product" OnSubmit="Upload">
+    <div class="form-group">
+        <label for="title">Title</label>
+        <InputText id="title" @bind-Value="product.Title" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="description">Description</label>
+        <InputText id="description" @bind-Value="product.Description" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="price">Price</label>
+        <InputNumber id="price" @bind-Value="product.Price" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="original-price">Original Price</label>
+        <InputNumber id="original-price" @bind-Value="product.OriginalPrice" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="image">Image URL</label>
+        <InputText id="image" @bind-Value="product.Image" class="form-control" />
+    </div>
+    <InputSelect @bind-Value="product.CategoryId" class="form-select" id="selectCategoria">
+        @foreach (var cat in categories)
+        {
+            <option value="@cat.Id">@cat.Name</option>
+        }
+    </InputSelect>
+    <button type="submit" class="btn btn-primary mt-2">Upload</button>
+</EditForm>
+
+@code {
+    Product product = new Product();
+
+
+    List<Category> categories;
+
+    private async Task Upload()
+    {
+
+        
+        var result = await Http.PostAsJsonAsync("api/Product/upload-product", product);
+        if (result.IsSuccessStatusCode)
+        {
+            ToastService.ShowSuccess("The product has been uploaded successfully", "Success");
+            NavigationManager.NavigateTo("");
+        }
+        else
+        {
+            ToastService.ShowError("An error occurred while trying uploading the product", "Error");
+        }
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        categories = CategoryService.Categories;
+        product.CategoryId = 1;
+    }
+}

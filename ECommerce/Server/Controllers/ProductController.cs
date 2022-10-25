@@ -39,5 +39,11 @@ namespace ECommerce.Server.Controllers
         {
             return Ok(await _productService.SearchProducts(searchText));
         }
+
+        [HttpPost("upload-product")]
+        public async Task<ActionResult<Product>> UploadProduct(Product product)
+        {
+            return Ok(await _productService.UploadProduct(product));
+        }
     }
 }

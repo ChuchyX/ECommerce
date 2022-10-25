@@ -13,7 +13,7 @@ namespace ECommerce.Shared
         public string Description { get; set; }
         public decimal Price { get; set; }
         public decimal OriginalPrice { get; set; }
-        public string Image { get; set; } = "https://via.placeholder.com/300x300";
+        public string Image { get; set; }
         public int Quantity { get; set; } = 1;
         //public bool IsPublic { get; set; }
         //public bool IsDeleted { get; set; }
