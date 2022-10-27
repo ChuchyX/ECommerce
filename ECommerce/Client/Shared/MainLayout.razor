@@ -48,6 +48,7 @@
     private async void Logout()
     {
         await LocalStorage.RemoveItemAsync("token");
+        await LocalStorage.RemoveItemAsync("cart");
         await AuthStateProvider.GetAuthenticationStateAsync();
         NavigationManager.NavigateTo("/");
     }
