@@ -92,8 +92,8 @@ namespace ECommerce.Server.Controllers
             {
                 string token = CreateToken(usuario);
 
-                var refreshToken = GenerateRefreshToken();
-                SetRefreshToken(refreshToken, usuario);
+               
+                SetRefreshToken(token, usuario);
 
                 return Ok(token);
             }         
@@ -101,58 +101,15 @@ namespace ECommerce.Server.Controllers
 
 
 
-        [HttpGet("getcartitems"), Authorize]
-        public async Task<ActionResult<List<Product>>> GetCartItems(string token)
-        {
-            User user = await _context.Users.FirstOrDefaultAsync(x => x.RefreshToken == token);
-            return Ok(user.cartItems);
-        }
+    
 
-        [HttpPost("refresh-token")]
-        public async Task<ActionResult<string>> RefreshToken(User user)
-        {
-            var refreshToken = Request.Cookies["refreshToken"];
-
-            if (!user.RefreshToken.Equals(refreshToken))
-            {
-                return Unauthorized("Invalid Refresh Token.");
-            }
-            else if (user.TokenExpires < DateTime.Now)
-            {
-                return Unauthorized("Token expired.");
-            }
-
-            string token = CreateToken(user);
-            var newRefreshToken = GenerateRefreshToken();
-            SetRefreshToken(newRefreshToken, user);
-
-            return Ok(token);
-        }
-
-        private RefreshToken GenerateRefreshToken()
-        {
-            var refreshToken = new RefreshToken
-            {
-                Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
-                Expires = DateTime.Now.AddDays(7),
-                Created = DateTime.Now
-            };
-
-            return refreshToken;
-        }
-
-        private void SetRefreshToken(RefreshToken newRefreshToken, User user)
-        {
-            var cookieOptions = new CookieOptions
-            {
-                HttpOnly = true,
-                Expires = newRefreshToken.Expires
-            };
-            Response.Cookies.Append("refreshToken", newRefreshToken.Token, cookieOptions);
-
-            user.RefreshToken = newRefreshToken.Token;
-            user.TokenCreated = newRefreshToken.Created;
-            user.TokenExpires = newRefreshToken.Expires;
+    
+      
+        private void SetRefreshToken(string token, User user)
+        {         
+            user.RefreshToken = token;
+            user.TokenCreated = DateTime.Now;
+            user.TokenExpires = DateTime.Now.AddDays(7);
 
             _context.Entry(user).State = EntityState.Modified;
             _context.SaveChangesAsync();
